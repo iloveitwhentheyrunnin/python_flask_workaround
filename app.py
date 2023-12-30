@@ -4,6 +4,7 @@ from flask_scss import Scss
 from flask_mysqldb import MySQL
 from flask_bcrypt import Bcrypt 
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
 
 
 app = Flask(__name__, static_url_path='/static', template_folder='templates')
@@ -64,9 +65,13 @@ def register():
         
         # Hash the password
         hashed_password = generate_password_hash(pwd, method='pbkdf2:sha256')
+        
+        # Set Registering Date
+        now = datetime.now()
+        formatted_date = now.strftime('%Y-%m-%d %H:%M:%S')
 
         cur = mysql.connection.cursor()
-        cur.execute(f"insert into tbl_users (username, password) values ('{username}', '{hashed_password}')")
+        cur.execute(f"insert into tbl_users (username, password, join_date) values ('{username}', '{hashed_password}', '{formatted_date}')")
         mysql.connection.commit()
         cur.close()
         
