@@ -8,12 +8,14 @@
     <title>Home of my workout!</title>
 </head>
 <body>
+    {% include '/partials/_navbar.html' %}
     <h1>Welcome to my home page!</h1>
-    
+
     {% if username %}
     You're connected, <b>{{ username }}</b>! Congrats.
     {% else %}
-    You're not connected. Please <a href="/login">login</a>.
+    You're not connected. Please sign-up to access your to-do list. <a href="/login">login</a>. <br><br>
+    Not registered yet? <a href="/register">Register now</a>
     {% endif %}
 
     {% assets "main_js" %}

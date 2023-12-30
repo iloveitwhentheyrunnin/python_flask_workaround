@@ -32,10 +32,12 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         pwd = request.form['password']
+        
         cur = mysql.connection.cursor()
         cur.execute(f"select username, password from tbl_users where username = '{username}'")
         user = cur.fetchone()
         cur.close()
+        
         if user and pwd == user[1]:
             session['username'] = user[0]
             return redirect(url_for('home'))
@@ -43,6 +45,26 @@ def login():
             return render_template('login.html', error='Invalid credentials.')
     
     return render_template('login.html')
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect('/')
+
+@app.route("/register", methods=['GET','POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        pwd = request.form['password']
+        
+        cur = mysql.connection.cursor()
+        cur.execute(f"insert into tbl_users (username, password) values ('{username}', '{pwd}')")
+        mysql.connection.commit()
+        cur.close()
+        
+        return redirect(url_for('login'))
+    
+    return render_template('register.html')
         
 if __name__ == '__main__':
     app.run(debug=True,  use_reloader=False) # avoid double compilation

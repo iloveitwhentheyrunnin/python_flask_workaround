@@ -5,23 +5,19 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css')}}">
-    <title>Login to my workout place</title>
+    <title>Registering to my workout place</title>
 </head>
 <body>
     {% include '/partials/_navbar.html' %}
-    <h1>Login</h1>
-    
-    {% if error %}
-        <p id="errors">{{error}}</p>
-    {% endif %}
- 
-    <form method="POST" action="/login">
-        <label for="username">Username:</label>
+    <h1>Register</h1>
+
+    <form method="POST" action="/register">
+        <label for="username">Choose a username:</label>
         <input type="text" id="username" name="username" required><br>
         <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br><br><br>
-        <input type="submit" value="Login"><br><br>
-        Not registered yet? <a href="/register">Register now</a>
+        <input type="password" id="password" name="password" required><br><br>
+        <input type="submit" value="Register"><br><br>
+        Already Registered? <a href="/login">Login now</a>
     </form>
 
     {% assets "main_js" %}
