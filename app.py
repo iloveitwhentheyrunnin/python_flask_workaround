@@ -2,6 +2,9 @@ from flask import Flask, redirect, render_template, session, url_for, request
 from flask_assets import Bundle, Environment
 from flask_scss import Scss
 from flask_mysqldb import MySQL
+from flask_bcrypt import Bcrypt 
+from werkzeug.security import generate_password_hash, check_password_hash
+
 
 app = Flask(__name__, static_url_path='/static', template_folder='templates')
 
@@ -17,6 +20,7 @@ mysql = MySQL(app)
 js = Bundle('home.js', 'page1.js', output='gen/main.js')
 
 assets = Environment(app)
+bcrypt = Bcrypt(app) 
 
 assets.register('main_js', js)
 
@@ -37,8 +41,9 @@ def login():
         cur.execute(f"select username, password from tbl_users where username = '{username}'")
         user = cur.fetchone()
         cur.close()
-        
-        if user and pwd == user[1]:
+
+        #check the pass hash
+        if user and check_password_hash(user[1], pwd):
             session['username'] = user[0]
             return redirect(url_for('home'))
         else:
@@ -57,8 +62,11 @@ def register():
         username = request.form['username']
         pwd = request.form['password']
         
+        # Hash the password
+        hashed_password = generate_password_hash(pwd, method='pbkdf2:sha256')
+
         cur = mysql.connection.cursor()
-        cur.execute(f"insert into tbl_users (username, password) values ('{username}', '{pwd}')")
+        cur.execute(f"insert into tbl_users (username, password) values ('{username}', '{hashed_password}')")
         mysql.connection.commit()
         cur.close()
         
