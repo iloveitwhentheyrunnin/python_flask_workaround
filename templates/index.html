@@ -4,12 +4,20 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css')}}">
     <title>Home of my workout!</title>
 </head>
 <body>
     <h1>Welcome to my home page!</h1>
+    
+    {% if username %}
+    You're connected, <b>{{ username }}</b>! Congrats.
+    {% else %}
+    You're not connected. Please <a href="/login">login</a>.
+    {% endif %}
+
     {% assets "main_js" %}
-    <script type='text/javascript' src="{{ ASSET_URL }}"></script>
+    <script type='text/javascript' src="{{ ASSET_URL_JS }}"></script>
     {% endassets %}
 </body>
 </html>
