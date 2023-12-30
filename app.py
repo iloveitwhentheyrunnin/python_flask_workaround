@@ -1,4 +1,4 @@
-from flask import Flask, render_template, session, url_for, request
+from flask import Flask, redirect, render_template, session, url_for, request
 from flask_assets import Bundle, Environment
 from flask_scss import Scss
 from flask_mysqldb import MySQL
@@ -26,6 +26,23 @@ def home():
         return render_template('index.html', username=session['username'])
     else:
         return render_template('index.html')
+
+@app.route("/login", methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        pwd = request.form['password']
+        cur = mysql.connection.cursor()
+        cur.execute(f"select username, password from tbl_users where username = '{username}'")
+        user = cur.fetchone()
+        cur.close()
+        if user and pwd == user[1]:
+            session['username'] = user[0]
+            return redirect(url_for('home'))
+        else:
+            return render_template('login.html', error='Invalid credentials.')
     
+    return render_template('login.html')
+        
 if __name__ == '__main__':
-    app.run(debug=True,  use_reloader=False) #avoid double compilation
+    app.run(debug=True,  use_reloader=False) # avoid double compilation
