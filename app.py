@@ -6,6 +6,7 @@ from flask_bcrypt import Bcrypt
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
+from functools import wraps
 
 app = Flask(__name__, static_url_path='/static', template_folder='templates')
 
@@ -170,14 +171,22 @@ def delete_task(task_id):
 
     return redirect(url_for('home', success='Task Deleted'))
 
+# Middleware to manage access 
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'username' in session and session['role'] == 'admin':
+            return f(*args, **kwargs)
+        else:
+            abort(403)  # Forbidden
+    return decorated_function
+
 # Access to admin dashboard
 @app.route('/admin/dashboard')
+@admin_required # my little middleware function
 def admin_dashboard():
-    if 'username' in session and session['role'] == 'admin':
-        # Render admin dashboard
-        return render_template('admin_dashboard.html')
-    else:
-        abort(403)  # Forbidden
+    return render_template('admin_dashboard.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True,  use_reloader=False) # avoid double compilation
