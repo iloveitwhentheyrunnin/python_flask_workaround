@@ -1,6 +1,9 @@
 <nav>
     <ul>
         <li><a href="/">Home</a></li>
+        {% if role == 'admin' %} 
+        <li><a href="/admin/dashboard">Admin Dashboard</a></li>
+        {% endif %}
         {% if username %} 
         <li><a href="/logout">Logout</a></li>
         {% endif %}

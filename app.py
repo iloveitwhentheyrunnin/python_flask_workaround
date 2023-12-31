@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, session, url_for, request
+from flask import Flask, abort, redirect, render_template, session, url_for, request
 from flask_assets import Bundle, Environment
 from flask_scss import Scss
 from flask_mysqldb import MySQL
@@ -49,7 +49,7 @@ def get_tasks_from_database():
 def home():
     if 'username' in session:
         tasks = get_tasks_from_database()
-        return render_template('index.html', username=session['username'], tasks = tasks)
+        return render_template('index.html', username=session['username'], role=session['role'], tasks = tasks)
     else:
         return render_template('index.html')
 
@@ -62,7 +62,7 @@ def login():
         
         cur = mysql.connection.cursor()
         # a little binding to prevent from injections
-        cur.execute(f"select username, password, id from tbl_users where username = %s",({username}))
+        cur.execute(f"select username, password, id, role from tbl_users where username = %s",({username}))
         user = cur.fetchone()
         cur.close()
 
@@ -70,6 +70,7 @@ def login():
         if user and check_password_hash(user[1], pwd):
             session['username'] = user[0]
             session['user_id'] = user[2]
+            session['role'] = user [3]
             return redirect(url_for('home'))
         else:
             return render_template('login.html', error='Invalid credentials.')
@@ -168,6 +169,15 @@ def delete_task(task_id):
     cur.close()
 
     return redirect(url_for('home', success='Task Deleted'))
-    
+
+# Access to admin dashboard
+@app.route('/admin/dashboard')
+def admin_dashboard():
+    if 'username' in session and session['role'] == 'admin':
+        # Render admin dashboard
+        return render_template('admin_dashboard.html')
+    else:
+        abort(403)  # Forbidden
+
 if __name__ == '__main__':
     app.run(debug=True,  use_reloader=False) # avoid double compilation
