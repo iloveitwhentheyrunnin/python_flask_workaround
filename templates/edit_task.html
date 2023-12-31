@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css')}}">
+    <title>Editing my task</title>
+</head>
+<body>
+    {% include '/partials/_navbar.html' %}
+
+    <div class="task_create_container">
+        <h1>Edit this task</h1>
+        {% if error %}
+        <p id="errors">{{error}}</p>
+        {% endif %}
+        <form method="POST" action="{{ url_for('edit_task', task_id=task[0]) }}">
+            <label for="new_task_desc">New Task Description:</label><br><br>
+            <textarea name="new_task_desc" placeholder="{{task[1]}}" required>{{ task.task_desc }}</textarea><br><br>
+            <button type="submit">Update Task</button>
+        </form>
+    </div>
+
+    {% assets "main_js" %}
+    <script type='text/javascript' src="{{ ASSET_URL_JS }}"></script>
+    {% endassets %}
+</body>
+</html>

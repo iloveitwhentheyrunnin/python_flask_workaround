@@ -30,11 +30,12 @@ p#errors{
 
 .task_create_container textarea{
     width: 300px;
+    height: 100px; /* Set your desired height */
+    line-height: 100px;
     text-align: center;
     display: flex;
-    resize: none;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     border: 2px solid #333;
     border-radius: 8px;
     padding: 0px;
@@ -46,17 +47,38 @@ p#errors{
     padding: 20px;
 }
 
+.edit-delete-links {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.edit-delete-links a {
+    margin: 10 10px;
+    color: white;
+    text-decoration: none;
+}
+
 .card{
     text-align: center;
     border: 2px solid #333;
     border-radius: 8px;
     padding: 40px;
     margin: 10px;
+    position: relative;
 }
 
 .card:hover{
     background-color: #333;
-    color: white;
+    color: transparent;
+}
+
+
+.card:hover .edit-delete-links {
+    opacity: 1;
 }
 
 .card h2{

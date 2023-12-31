@@ -38,7 +38,7 @@ def get_tasks_from_database():
     tasks = []
     
     for task_data in tasks_data:
-        task = Task(user_id=task_data[1], task_desc=task_data[2], is_done=task_data[3])
+        task = Task(id=task_data[0], user_id=task_data[1], task_desc=task_data[2], is_done=task_data[3])
         tasks.append(task)
     
     return tasks
@@ -103,10 +103,11 @@ def register():
 
 # Make it work with a class and a model just to flex a bit and try something different :p
 class Task:
-    def __init__(self, user_id, task_desc, is_done=False):
+    def __init__(self, user_id, task_desc, is_done=False, id=None):
         self.user_id = user_id
         self.task_desc = task_desc
         self.is_done = is_done
+        self.id = id
 
     def write_in_db(self):
         cur = mysql.connection.cursor()
@@ -124,11 +125,43 @@ def create_task():
         if not user_id or not task_desc:
             return redirect(url_for('home', error='Invalid input'))
         
-        new_task = Task(user_id=user_id, task_desc=task_desc)
+        new_task = Task(user_id=user_id, task_desc=task_desc,id=None)
 
         new_task.write_in_db()
         
         return redirect(url_for('home', success='Task Added'))
+
+# Editing a task
+@app.route('/edit_task/<int:task_id>', methods=['GET', 'POST'])
+def edit_task(task_id):
+    if request.method == 'POST':
+        new_task_desc = request.form.get('new_task_desc')
+        cur = mysql.connection.cursor()
+        cur.execute("UPDATE tbl_tasks SET task_desc = %s WHERE `id` = %s", (new_task_desc, task_id))
+        mysql.connection.commit()
+        cur.close()
+
+        return redirect(url_for('home', success='Task Updated'))
+
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT id, task_desc FROM tbl_tasks WHERE id = %s", (task_id,))
+    task_data = cur.fetchone()
+    cur.close()
+
+    if task_data:
+        return render_template('edit_task.html', task=task_data)
+    else:
+        return redirect(url_for('home', error='Task not found'))
+
+# Delete a task
+@app.route('/delete_task/<int:task_id>', methods=['GET'])
+def delete_task(task_id):
+    cur = mysql.connection.cursor()
+    cur.execute("DELETE FROM tbl_tasks WHERE id = %s", (task_id,))
+    mysql.connection.commit()
+    cur.close()
+
+    return redirect(url_for('home', success='Task Deleted'))
     
 if __name__ == '__main__':
     app.run(debug=True,  use_reloader=False) # avoid double compilation
