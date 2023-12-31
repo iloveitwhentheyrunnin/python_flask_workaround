@@ -7,11 +7,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 
-
 app = Flask(__name__, static_url_path='/static', template_folder='templates')
 
 app.secret_key = 'your-secret-key'
 
+# Configuring connection to db
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
@@ -19,6 +19,7 @@ app.config['MYSQL_DB'] = 'flask_users'
 
 mysql = MySQL(app)
 
+# Compiling JS
 js = Bundle('home.js', 'page1.js', output='gen/main.js')
 
 assets = Environment(app)
@@ -43,6 +44,7 @@ def get_tasks_from_database():
     
     return tasks
 
+# Home Page 
 @app.route("/")
 def home():
     if 'username' in session:
@@ -51,6 +53,7 @@ def home():
     else:
         return render_template('index.html')
 
+# Connecting a registered account
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -73,11 +76,13 @@ def login():
     
     return render_template('login.html')
 
+# Disconnecting
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect('/')
 
+# Creating a user account
 @app.route("/register", methods=['GET','POST'])
 def register():
     if request.method == 'POST':
@@ -116,6 +121,7 @@ class Task:
         mysql.connection.commit()
         cur.close()
 
+# Create a task
 @app.route('/create_task', methods=['POST'])
 def create_task():
     if request.method == 'POST':
