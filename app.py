@@ -211,6 +211,7 @@ def edit_task(task_id):
 
 # Delete a task
 @app.route('/delete_task/<int:task_id>', methods=['GET'])
+@login_required
 def delete_task(task_id):
     cur = mysql.connection.cursor()
 
