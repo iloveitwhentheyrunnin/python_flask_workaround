@@ -10,7 +10,28 @@
 <body>
     {% include '/partials/_navbar.html' %}
     <h1>My Administrator Pannel</h1>
-    
+    <br>
+    <h2>User List</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Join Date</th>
+                <th>Role</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.join_date }}</td>
+                    <td>{{ user.role }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
     {% assets "main_js" %}
     <script type='text/javascript' src="{{ ASSET_URL_JS }}"></script>
     {% endassets %}

@@ -34,7 +34,6 @@ def get_tasks_from_database():
     cur = mysql.connection.cursor()
     cur.execute("SELECT id, user_id, task_desc, is_done FROM tbl_tasks WHERE is_done = false and user_id = %s", (user_identifier,))
     tasks_data = cur.fetchall()
-    print(tasks_data)
     cur.close()
             
     tasks = []
@@ -44,6 +43,27 @@ def get_tasks_from_database():
         tasks.append(task)
     
     return tasks
+
+# Getting all the users 
+def get_users_from_database():
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT id, username, join_date, role FROM tbl_users")
+    users_data = cur.fetchall()
+    cur.close()
+            
+    users = []
+    
+    # just a little practice of a dict :)
+    for user_data in users_data:
+        user = {
+            'id': user_data[0],
+            'username': user_data[1],
+            'join_date': user_data[2],
+            'role': user_data[3],
+        }
+        users.append(user)
+
+    return users
 
 # Home Page 
 @app.route("/")
@@ -185,7 +205,8 @@ def admin_required(f):
 @app.route('/admin/dashboard')
 @admin_required # my little middleware function
 def admin_dashboard():
-    return render_template('admin_dashboard.html')
+    users = get_users_from_database()
+    return render_template('admin_dashboard.html', users=users)
 
 
 if __name__ == '__main__':
