@@ -185,35 +185,48 @@ def create_task():
 @app.route('/edit_task/<int:task_id>', methods=['GET', 'POST'])
 @login_required
 def edit_task(task_id):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT id, task_desc, user_id FROM tbl_tasks WHERE id = %s", (task_id,))
+    task_data = cur.fetchone()
+    
+    if not task_data:
+        cur.close()
+        return redirect(url_for('home'))
+
+    # Check if the task belongs to the current user
+    if task_data[2] != session['user_id']:
+        cur.close()
+        return redirect(url_for('home'))
+
     if request.method == 'POST':
         new_task_desc = request.form.get('new_task_desc')
-        cur = mysql.connection.cursor()
-        cur.execute("UPDATE tbl_tasks SET task_desc = %s WHERE `id` = %s", (new_task_desc, task_id))
+        cur.execute("UPDATE tbl_tasks SET task_desc = %s WHERE id = %s", (new_task_desc, task_id))
         mysql.connection.commit()
         cur.close()
 
-        return redirect(url_for('home', success='Task Updated'))
+        return redirect(url_for('home'))
 
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT id, task_desc FROM tbl_tasks WHERE id = %s", (task_id,))
-    task_data = cur.fetchone()
     cur.close()
-
-    if task_data:
-        return render_template('edit_task.html', task=task_data)
-    else:
-        return redirect(url_for('home', error='Task not found'))
+    return render_template('edit_task.html', task=task_data)
 
 # Delete a task
 @app.route('/delete_task/<int:task_id>', methods=['GET'])
-@login_required
 def delete_task(task_id):
     cur = mysql.connection.cursor()
+
+    # Check if the task exists and belongs to the current user
+    cur.execute("SELECT user_id FROM tbl_tasks WHERE id = %s", (task_id,))
+    task_owner_id = cur.fetchone()
+
+    if not task_owner_id or task_owner_id[0] != session.get('user_id'):
+        cur.close()
+        return redirect(url_for('home'))
+
     cur.execute("DELETE FROM tbl_tasks WHERE id = %s", (task_id,))
     mysql.connection.commit()
     cur.close()
 
-    return redirect(url_for('home', success='Task Deleted'))
+    return redirect(url_for('home'))
 
 # Access to admin dashboard
 @app.route('/admin/dashboard')
