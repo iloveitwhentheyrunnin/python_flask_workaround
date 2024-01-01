@@ -28,6 +28,27 @@ bcrypt = Bcrypt(app)
 
 assets.register('main_js', js)
 
+
+# Middleware to manage admin access 
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'username' in session and session['role'] == 'admin':
+            return f(*args, **kwargs)
+        else:
+            abort(403)  # Forbidden
+    return decorated_function
+
+# Middleware to manage authenticated users access
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'username' in session:
+            return f(*args, **kwargs)
+        else:
+            abort(401)  # Unauthorized
+    return decorated_function
+
 # a little function to retrieve tasks 
 def get_tasks_from_database():
     user_identifier = session['user_id']
@@ -145,6 +166,7 @@ class Task:
 
 # Create a task
 @app.route('/create_task', methods=['POST'])
+@login_required
 def create_task():
     if request.method == 'POST':
         user_id = session['user_id']
@@ -161,6 +183,7 @@ def create_task():
 
 # Editing a task
 @app.route('/edit_task/<int:task_id>', methods=['GET', 'POST'])
+@login_required
 def edit_task(task_id):
     if request.method == 'POST':
         new_task_desc = request.form.get('new_task_desc')
@@ -183,6 +206,7 @@ def edit_task(task_id):
 
 # Delete a task
 @app.route('/delete_task/<int:task_id>', methods=['GET'])
+@login_required
 def delete_task(task_id):
     cur = mysql.connection.cursor()
     cur.execute("DELETE FROM tbl_tasks WHERE id = %s", (task_id,))
@@ -190,16 +214,6 @@ def delete_task(task_id):
     cur.close()
 
     return redirect(url_for('home', success='Task Deleted'))
-
-# Middleware to manage access 
-def admin_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if 'username' in session and session['role'] == 'admin':
-            return f(*args, **kwargs)
-        else:
-            abort(403)  # Forbidden
-    return decorated_function
 
 # Access to admin dashboard
 @app.route('/admin/dashboard')
