@@ -9,16 +9,20 @@
 </head>
 <body>
     {% include '/partials/_navbar.html' %}
-    <h1>Register</h1>
+    <br><br>
+    <div class="task_create_container">
+        <h1>Register</h1>
+        <br>
+        <form method="POST" action="/register">
+            <label for="username">Choose a username:</label>
+            <input type="text" id="username" name="username" required><br>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required><br><br>
+            <input type="submit" value="Register"><br><br>
+            Already Registered? <a href="/login"><b>Login now</b></a>
+        </form>
 
-    <form method="POST" action="/register">
-        <label for="username">Choose a username:</label>
-        <input type="text" id="username" name="username" required><br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br><br>
-        <input type="submit" value="Register"><br><br>
-        Already Registered? <a href="/login">Login now</a>
-    </form>
+    </div>
 
     {% assets "main_js" %}
     <script type='text/javascript' src="{{ ASSET_URL_JS }}"></script>

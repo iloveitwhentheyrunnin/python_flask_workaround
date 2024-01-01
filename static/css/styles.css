@@ -2,6 +2,48 @@
     font-family: Arial, Helvetica, sans-serif;
 }
 
+form {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 300px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    transition: transform 0.2s ease-in-out;
+}
+
+input[type="submit"] {
+    background-color: #333;
+    color: #fff;
+    cursor: pointer;
+}
+
+input[type="submit"]:hover {
+    transform: translateY(-3px);
+}
+
+a {
+    text-decoration: none;
+    color: #333;
+}
+
+a:hover {
+    text-decoration: underline;
+}
 
 p#errors{
     color: red;
@@ -31,6 +73,7 @@ p#errors{
 .task_create_container textarea{
     width: 300px;
     height: 100px;
+    resize: none;
     line-height: 100px;
     text-align: center;
     display: flex;
@@ -43,8 +86,18 @@ p#errors{
     transition: padding 0.3s ease;
 }
 
-.task_create_container textarea:focus{
-    padding: 20px;
+button{
+    background-color: #333;
+    color: #fff;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 8px;
+    transition: transform 0.2s ease-in-out;
+    border-color: transparent;
+}
+
+button:hover{
+    transform: translateY(-3px);
 }
 
 .edit-delete-links {

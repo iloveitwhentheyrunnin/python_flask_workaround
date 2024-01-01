@@ -9,20 +9,24 @@
 </head>
 <body>
     {% include '/partials/_navbar.html' %}
-    <h1>Login</h1>
-    
-    {% if error %}
-        <p id="errors">{{error}}</p>
-    {% endif %}
+    <br><br>
+    <div class="task_create_container">
+        <h1>Login</h1>
+        <br>
+        {% if error %}
+            <p id="errors">{{error}}</p>
+        {% endif %}
 
-    <form method="POST" action="/login">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required><br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br><br><br>
-        <input type="submit" value="Login"><br><br>
-        Not registered yet? <a href="/register">Register now</a>
-    </form>
+        <form method="POST" action="/login">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required><br>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required><br><br><br>
+            <input type="submit" value="Login"><br><br>
+            Not registered yet? <a href="/register"><b>Register now</b></a>
+        </form>
+
+    </div>
 
     {% assets "main_js" %}
     <script type='text/javascript' src="{{ ASSET_URL_JS }}"></script>
