@@ -15,7 +15,7 @@ app.secret_key = 'your-secret-key'
 # Configuring connection to db
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = ''
+app.config['MYSQL_PASSWORD'] = 'root'
 app.config['MYSQL_DB'] = 'flask_users'
 
 mysql = MySQL(app)
